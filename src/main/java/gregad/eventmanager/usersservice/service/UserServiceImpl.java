@@ -1,10 +1,12 @@
 package gregad.eventmanager.usersservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gregad.eventmanager.usersservice.dao.SequenceDao;
 import gregad.eventmanager.usersservice.dao.UserDao;
 import gregad.eventmanager.usersservice.dto.NetworkCredentialDto;
 import gregad.eventmanager.usersservice.dto.SocialNetwork;
 import gregad.eventmanager.usersservice.dto.UserDto;
+import gregad.eventmanager.usersservice.model.DatabaseSequence;
 import gregad.eventmanager.usersservice.model.UserEntity;
 import lombok.SneakyThrows;
 import org.json.JSONObject;
@@ -28,18 +30,35 @@ public class UserServiceImpl implements UserService {
     @Autowired
     UserDao repo;
     @Autowired
+    SequenceDao sequenceRepo;
+    @Autowired
     RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
 
     @Override
     public UserDto addUser(String telegramId) {
+        long id=getId();
         UserEntity user = UserEntity.builder()
+                .id(id)
                 .telegramId(telegramId)
                 .allowedSocialNetworks(new ArrayList<>())
                 .build();
         repo.save(user);
         return toUserDto(user);
+    }
+
+    private long getId() {
+        DatabaseSequence databaseSequence = sequenceRepo.findById(1).orElse(null);
+        long id;
+        if (databaseSequence==null){
+            sequenceRepo.save(new DatabaseSequence(1,1l));
+            id=1;
+        }else {
+            id=databaseSequence.getSeq()+1;
+            databaseSequence.setSeq(id);
+        }
+        return id;
     }
 
     private UserDto toUserDto(UserEntity user) {
