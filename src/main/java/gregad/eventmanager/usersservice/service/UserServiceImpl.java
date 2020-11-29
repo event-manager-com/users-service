@@ -11,6 +11,7 @@ import gregad.eventmanager.usersservice.model.UserEntity;
 import lombok.SneakyThrows;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -28,12 +29,15 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     @Autowired
-    UserDao repo;
+    private UserDao repo;
     @Autowired
-    SequenceDao sequenceRepo;
+    private SequenceDao sequenceRepo;
     @Autowired
-    RestTemplate restTemplate;
+    private RestTemplate restTemplate;
     private final ObjectMapper objectMapper = new ObjectMapper();
+    
+    @Value("${router.service}")
+    private String routerUrl;
 
 
     @Override
@@ -114,16 +118,16 @@ public class UserServiceImpl implements UserService {
 
     @SneakyThrows
     private void sendCredentials(NetworkCredentialDto networkCredential) {
-        String url = SocialNetwork.getUrl(networkCredential.getNetwork());
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
         JSONObject jsonObject = new JSONObject();
         jsonObject.put("id", networkCredential.getId());
+        jsonObject.put("network", networkCredential.getNetwork());
         jsonObject.put("userName", networkCredential.getUserName());
         jsonObject.put("password", networkCredential.getPassword());
         
         HttpEntity<String> request = new HttpEntity<String>(jsonObject.toString(), headers);
-        Boolean isAdded = restTemplate.postForObject(url, request, Boolean.class);
+        Boolean isAdded = restTemplate.postForObject(routerUrl, request, Boolean.class);
         if (!isAdded){
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"");//TODO fill message
         }
@@ -143,8 +147,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendToDelete(long id, String networkName) {
-        String url = SocialNetwork.getUrl(networkName);
-        restTemplate.delete(url+"/"+id);
+        restTemplate.delete(routerUrl+"?id="+id+"&network="+networkName);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
