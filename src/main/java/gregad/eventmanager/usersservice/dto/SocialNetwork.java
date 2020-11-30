@@ -9,11 +9,10 @@ import java.util.Arrays;
  */
 @RequiredArgsConstructor
 public enum SocialNetwork {
-    FACEBOOK("facebook","http://facebook-connector-service/users"),
-    TWITTER("twitter","http://twitter-connector-service/users"),
-    INSTAGRAM("instagram","http://instagram-connector-service/users");
+    FACEBOOK("facebook"),
+    TWITTER("twitter"),
+    INSTAGRAM("instagram");
     private final String network;
-    private final String url;
 
     public static String getNetwork(String str){
         SocialNetwork socialNetworkConstants = Arrays
@@ -26,15 +25,5 @@ public enum SocialNetwork {
         return socialNetworkConstants.network;
     }
 
-    public static String getUrl(String str){
-        SocialNetwork socialNetworkConstants = Arrays
-                .stream(values())
-                .filter(e -> e.network.equalsIgnoreCase(str))
-                .findAny()
-                .orElseThrow(() -> {
-                    throw new IllegalArgumentException("Network: " + str + " not supported yet");
-                });
-        return socialNetworkConstants.url;
-    }
     
 }

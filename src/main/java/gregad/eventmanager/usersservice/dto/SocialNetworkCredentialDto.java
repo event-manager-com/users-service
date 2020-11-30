@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class NetworkCredentialDto {
+public class SocialNetworkCredentialDto {
     private long id;
     private String network;
     private String userName;

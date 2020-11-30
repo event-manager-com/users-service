@@ -1,5 +1,6 @@
 package gregad.eventmanager.usersservice.configuration;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.context.annotation.Bean;
@@ -22,5 +23,9 @@ public class Config {
                 .setConnectTimeout(Duration.ofMillis(5000))
                 .setReadTimeout(Duration.ofMillis(5000))
                 .build();
+    }
+    @Bean
+    public ObjectMapper objectMapper(){
+        return new ObjectMapper();
     }
 }

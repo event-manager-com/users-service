@@ -3,13 +3,12 @@ package gregad.eventmanager.usersservice.service;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gregad.eventmanager.usersservice.dao.SequenceDao;
 import gregad.eventmanager.usersservice.dao.UserDao;
-import gregad.eventmanager.usersservice.dto.NetworkCredentialDto;
 import gregad.eventmanager.usersservice.dto.SocialNetwork;
+import gregad.eventmanager.usersservice.dto.SocialNetworkCredentialDto;
 import gregad.eventmanager.usersservice.dto.UserDto;
 import gregad.eventmanager.usersservice.model.DatabaseSequence;
 import gregad.eventmanager.usersservice.model.UserEntity;
 import lombok.SneakyThrows;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
@@ -34,7 +33,8 @@ public class UserServiceImpl implements UserService {
     private SequenceDao sequenceRepo;
     @Autowired
     private RestTemplate restTemplate;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    @Autowired
+    private ObjectMapper objectMapper;
     
     @Value("${router.service}")
     private String routerUrl;
@@ -102,7 +102,7 @@ public class UserServiceImpl implements UserService {
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public UserDto saveOrUpdateNetwork(NetworkCredentialDto networkCredential) {
+    public UserDto saveOrUpdateNetwork(SocialNetworkCredentialDto networkCredential) {
        long id = networkCredential.getId();
        UserEntity userEntity = repo.findById(id)
                 .orElseThrow(() -> {
@@ -117,17 +117,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @SneakyThrows
-    private void sendCredentials(NetworkCredentialDto networkCredential) {
+    private void sendCredentials(SocialNetworkCredentialDto networkCredential) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
-        JSONObject jsonObject = new JSONObject();
-        jsonObject.put("id", networkCredential.getId());
-        jsonObject.put("network", networkCredential.getNetwork());
-        jsonObject.put("userName", networkCredential.getUserName());
-        jsonObject.put("password", networkCredential.getPassword());
-        
-        HttpEntity<String> request = new HttpEntity<String>(jsonObject.toString(), headers);
-        Boolean isAdded = restTemplate.postForObject(routerUrl, request, Boolean.class);
+        String networkCredentialJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(networkCredential);
+        HttpEntity<String> request = new HttpEntity<String>(networkCredentialJson, headers);
+        Boolean isAdded = restTemplate.postForObject(routerUrl+"/credentials", request, Boolean.class);
         if (!isAdded){
             throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"");//TODO fill message
         }
@@ -147,7 +142,7 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendToDelete(long id, String networkName) {
-        restTemplate.delete(routerUrl+"?id="+id+"&network="+networkName);
+        restTemplate.delete(routerUrl+"/credentials"+"?id="+id+"&network="+networkName);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -156,6 +151,7 @@ public class UserServiceImpl implements UserService {
         UserEntity userEntity = repo.findById(id)
                 .orElseThrow(() -> {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id:" + id + " not found");});
-        return userEntity.getAllowedSocialNetworks();
+        List<String> allowedSocialNetworks = userEntity.getAllowedSocialNetworks();
+        return allowedSocialNetworks;
     }
 }

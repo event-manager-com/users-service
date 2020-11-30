@@ -17,6 +17,7 @@
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2020.0.0-M5</spring-cloud.version>
+        <jackson-datatype-jsr310.version>2.11.0</jackson-datatype-jsr310.version>
     </properties>
 
     <dependencies>
@@ -53,10 +54,9 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>com.vaadin.external.google</groupId>
-            <artifactId>android-json</artifactId>
-            <version>0.0.20131108.vaadin1</version>
-            <scope>compile</scope>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jsr310</artifactId>
+            <version>${jackson-datatype-jsr310.version}</version>
         </dependency>
     </dependencies>
 

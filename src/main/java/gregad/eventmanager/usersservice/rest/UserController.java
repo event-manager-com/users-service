@@ -1,6 +1,6 @@
 package gregad.eventmanager.usersservice.rest;
 
-import gregad.eventmanager.usersservice.dto.NetworkCredentialDto;
+import gregad.eventmanager.usersservice.dto.SocialNetworkCredentialDto;
 import gregad.eventmanager.usersservice.dto.UserDto;
 import gregad.eventmanager.usersservice.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +41,7 @@ public class UserController {
     }
     
     @PostMapping(value = NETWORKS)
-    UserDto saveOrUpdateNetworkCredentials(@RequestBody NetworkCredentialDto networkCredential){
+    UserDto saveOrUpdateNetworkCredentials(@RequestBody SocialNetworkCredentialDto networkCredential){
         return userService.saveOrUpdateNetwork(networkCredential);
     }
     
