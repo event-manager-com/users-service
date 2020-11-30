@@ -27,27 +27,31 @@ import java.util.List;
  */
 @Service
 public class UserServiceImpl implements UserService {
-    @Autowired
+    
     private UserDao repo;
-    @Autowired
+    
     private SequenceDao sequenceRepo;
-    @Autowired
+    
     private RestTemplate restTemplate;
-    @Autowired
+    
     private ObjectMapper objectMapper;
     
     @Value("${router.service}")
     private String routerUrl;
 
+    @Autowired
+    public UserServiceImpl(UserDao repo, SequenceDao sequenceRepo, RestTemplate restTemplate, ObjectMapper objectMapper) {
+        this.repo = repo;
+        this.sequenceRepo = sequenceRepo;
+        this.restTemplate = restTemplate;
+        this.objectMapper = objectMapper;
+    }
+
 
     @Override
     public UserDto addUser(String telegramId) {
         long id=getId();
-        UserEntity user = UserEntity.builder()
-                .id(id)
-                .telegramId(telegramId)
-                .allowedSocialNetworks(new ArrayList<>())
-                .build();
+        UserEntity user = new UserEntity(id,telegramId,new ArrayList<>());
         repo.save(user);
         return toUserDto(user);
     }
@@ -56,21 +60,18 @@ public class UserServiceImpl implements UserService {
         DatabaseSequence databaseSequence = sequenceRepo.findById(1).orElse(null);
         long id;
         if (databaseSequence==null){
-            sequenceRepo.save(new DatabaseSequence(1,1l));
+            sequenceRepo.save(new DatabaseSequence(1,1));
             id=1;
         }else {
             id=databaseSequence.getSeq()+1;
             databaseSequence.setSeq(id);
+            sequenceRepo.save(databaseSequence);
         }
         return id;
     }
 
     private UserDto toUserDto(UserEntity user) {
-        UserDto userDto = UserDto.builder()
-                .id(user.getId())
-                .telegramId(user.getTelegramId())
-                .allowedSocialNetworks(user.getAllowedSocialNetworks())
-                .build();
+        UserDto userDto = new UserDto(user.getId(),user.getTelegramId(),user.getAllowedSocialNetworks());
         return userDto;
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -122,10 +123,8 @@ public class UserServiceImpl implements UserService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         String networkCredentialJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(networkCredential);
         HttpEntity<String> request = new HttpEntity<String>(networkCredentialJson, headers);
-        Boolean isAdded = restTemplate.postForObject(routerUrl+"/credentials", request, Boolean.class);
-        if (!isAdded){
-            throw new ResponseStatusException(HttpStatus.SERVICE_UNAVAILABLE,"");//TODO fill message
-        }
+        restTemplate.postForObject(routerUrl+"/credentials", request, Boolean.class);
+ 
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 

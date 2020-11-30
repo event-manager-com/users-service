@@ -1,9 +1,6 @@
 package gregad.eventmanager.usersservice.model;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -15,7 +12,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
-@Builder
+@AllArgsConstructor
 @Document(collection = "users")
 public class UserEntity {
     @Id
