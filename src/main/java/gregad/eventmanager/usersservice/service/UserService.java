@@ -10,11 +10,11 @@ import java.util.List;
  */
 public interface UserService {
     UserDto addUser(String telegramId);
-    UserDto getUser(long id);
-    UserDto deleteUser(long id);
+    UserDto getUser(String id);
+    UserDto deleteUser(String id);
     UserDto updateUser(UserDto userDto);
     UserDto saveOrUpdateNetwork(SocialNetworkCredentialDto networkCredential);
-    UserDto deleteNetwork(long id,String network);
-    List<String> getNetworks(long id);
+    UserDto deleteNetwork(String id,String network);
+    List<String> getNetworks(String id);
 
 }

@@ -1,6 +1,7 @@
 package gregad.eventmanager.usersservice.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gregad.eventmanager.usersservice.api.ApiConstants;
 import gregad.eventmanager.usersservice.dao.SequenceDao;
 import gregad.eventmanager.usersservice.dao.UserDao;
 import gregad.eventmanager.usersservice.dto.SocialNetwork;
@@ -50,13 +51,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto addUser(String telegramId) {
-        long id=getId();
+        String id=getId();
         UserEntity user = new UserEntity(id,telegramId,new ArrayList<>());
         repo.save(user);
         return toUserDto(user);
     }
 
-    private long getId() {
+    private String getId() {
         DatabaseSequence databaseSequence = sequenceRepo.findById(1).orElse(null);
         long id;
         if (databaseSequence==null){
@@ -67,7 +68,7 @@ public class UserServiceImpl implements UserService {
             databaseSequence.setSeq(id);
             sequenceRepo.save(databaseSequence);
         }
-        return id;
+        return Long.toString(id);
     }
 
     private UserDto toUserDto(UserEntity user) {
@@ -76,14 +77,14 @@ public class UserServiceImpl implements UserService {
     }
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public UserDto getUser(long id) {
+    public UserDto getUser(String id) {
         return toUserDto(repo
                 .findById(id)
                 .orElseThrow(()->{throw new ResponseStatusException(HttpStatus.NOT_FOUND,"User with id:"+id+" not found");}));
     }
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public UserDto deleteUser(long id) {
+    public UserDto deleteUser(String id) {
         UserEntity userEntity = repo.findById(id)
                 .orElseThrow(() -> {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id:" + id + " not found");});
@@ -104,7 +105,7 @@ public class UserServiceImpl implements UserService {
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
     public UserDto saveOrUpdateNetwork(SocialNetworkCredentialDto networkCredential) {
-       long id = networkCredential.getId();
+       String id = networkCredential.getId();
        UserEntity userEntity = repo.findById(id)
                 .orElseThrow(() -> {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id:" + id + " not found");});
@@ -123,13 +124,13 @@ public class UserServiceImpl implements UserService {
         headers.setContentType(MediaType.APPLICATION_JSON);
         String networkCredentialJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(networkCredential);
         HttpEntity<String> request = new HttpEntity<String>(networkCredentialJson, headers);
-        restTemplate.postForObject(routerUrl+"/credentials", request, Boolean.class);
+        restTemplate.postForObject(routerUrl+ ApiConstants.CREDENTIALS, request, Boolean.class);
  
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
 
     @Override
-    public UserDto deleteNetwork(long id, String network) {
+    public UserDto deleteNetwork(String id, String network) {
         UserEntity userEntity = repo.findById(id)
                 .orElseThrow(() -> {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id:" + id + " not found");});
@@ -140,13 +141,13 @@ public class UserServiceImpl implements UserService {
         return toUserDto(userEntity);
     }
 
-    private void sendToDelete(long id, String networkName) {
-        restTemplate.delete(routerUrl+"/credentials"+"?id="+id+"&network="+networkName);
+    private void sendToDelete(String id, String networkName) {
+        restTemplate.delete(routerUrl+ApiConstants.CREDENTIALS+"?userId="+id+"&network="+networkName);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
     @Override
-    public List<String> getNetworks(long id) {
+    public List<String> getNetworks(String id) {
         UserEntity userEntity = repo.findById(id)
                 .orElseThrow(() -> {
                     throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User with id:" + id + " not found");});

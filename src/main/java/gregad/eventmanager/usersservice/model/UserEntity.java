@@ -13,10 +13,10 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Document(collection = "users")
+@Document(collection = "user")
 public class UserEntity {
     @Id
-    private long id;
+    private String id;
     private String telegramId;
     private List<String>allowedSocialNetworks;
 }

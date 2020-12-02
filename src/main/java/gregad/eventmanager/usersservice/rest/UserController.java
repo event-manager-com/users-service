@@ -21,7 +21,7 @@ public class UserController {
     UserService userService;
     
     @GetMapping(value = "/{id}")
-    UserDto getUser(@PathVariable long id){
+    UserDto getUser(@PathVariable String id){
         return userService.getUser(id);
     }
     
@@ -36,7 +36,7 @@ public class UserController {
     }
     
     @DeleteMapping(value = "/{id}")
-    UserDto deleteUser(@PathVariable long id){
+    UserDto deleteUser(@PathVariable String id){
        return userService.deleteUser(id);
     }
     
@@ -46,12 +46,12 @@ public class UserController {
     }
     
     @DeleteMapping(value = NETWORKS)
-    UserDto deleteNetwork(@RequestParam long id,@RequestParam String network){
+    UserDto deleteNetwork(@RequestParam String id,@RequestParam String network){
         return userService.deleteNetwork(id,network);
     }
     
     @GetMapping(value = NETWORKS+"/{id}")
-    List<String> getNetworks(@PathVariable long id){
+    List<String> getNetworks(@PathVariable String id){
         return userService.getNetworks(id);
     }
 }

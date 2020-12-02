@@ -1,6 +1,7 @@
 package gregad.eventmanager.usersservice.dto;
 
 import lombok.*;
+import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 
 import java.util.List;
 
@@ -12,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    private long id;
+    private String id;
     private String telegramId;
     private List<String> allowedSocialNetworks;
 }

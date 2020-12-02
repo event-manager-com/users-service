@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
  * @author Greg Adler
  */
 @Repository
-public interface UserDao extends MongoRepository<UserEntity,Long> {
+public interface UserDao extends MongoRepository<UserEntity,String> {
 }
