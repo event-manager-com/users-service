@@ -16,7 +16,6 @@ import java.util.List;
 @Document(collection = "user")
 public class UserEntity {
     @Id
-    private String id;
-    private String telegramId;
+    private int id;
     private List<String>allowedSocialNetworks;
 }

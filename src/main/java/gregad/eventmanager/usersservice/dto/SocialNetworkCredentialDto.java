@@ -13,7 +13,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SocialNetworkCredentialDto {
-    private String id;
+    private int id;
     private String network;
     private String userName;
     private String password;

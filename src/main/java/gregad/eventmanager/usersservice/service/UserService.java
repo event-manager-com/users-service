@@ -9,12 +9,12 @@ import java.util.List;
  * @author Greg Adler
  */
 public interface UserService {
-    UserDto addUser(String telegramId);
-    UserDto getUser(String id);
-    UserDto deleteUser(String id);
-    UserDto updateUser(UserDto userDto);
+    UserDto addUser(int telegramId);
+    UserDto getUser(int id);
+    UserDto deleteUser(int id);
+ //   UserDto updateUser(UserDto userDto);
     UserDto saveOrUpdateNetwork(SocialNetworkCredentialDto networkCredential);
-    UserDto deleteNetwork(String id,String network);
-    List<String> getNetworks(String id);
+    UserDto deleteNetwork(int id,String network);
+    List<String> getNetworks(int id);
 
 }

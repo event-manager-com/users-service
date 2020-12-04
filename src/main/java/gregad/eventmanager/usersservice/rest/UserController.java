@@ -21,22 +21,22 @@ public class UserController {
     UserService userService;
     
     @GetMapping(value = "/{id}")
-    UserDto getUser(@PathVariable String id){
+    UserDto getUser(@PathVariable int id){
         return userService.getUser(id);
     }
     
     @PostMapping
-    UserDto addUser(@RequestParam String telegramId){
+    UserDto addUser(@RequestParam int telegramId){
         return userService.addUser(telegramId);
     }
     
-    @PatchMapping
-    UserDto updateUser(@RequestBody UserDto userDto){
-        return userService.updateUser(userDto);
-    }
+//    @PatchMapping
+//    UserDto updateUser(@RequestBody UserDto userDto){
+//        return userService.updateUser(userDto);
+//    }
     
     @DeleteMapping(value = "/{id}")
-    UserDto deleteUser(@PathVariable String id){
+    UserDto deleteUser(@PathVariable int id){
        return userService.deleteUser(id);
     }
     
@@ -46,12 +46,12 @@ public class UserController {
     }
     
     @DeleteMapping(value = NETWORKS)
-    UserDto deleteNetwork(@RequestParam String id,@RequestParam String network){
+    UserDto deleteNetwork(@RequestParam int id,@RequestParam String network){
         return userService.deleteNetwork(id,network);
     }
     
     @GetMapping(value = NETWORKS+"/{id}")
-    List<String> getNetworks(@PathVariable String id){
+    List<String> getNetworks(@PathVariable int id){
         return userService.getNetworks(id);
     }
 }

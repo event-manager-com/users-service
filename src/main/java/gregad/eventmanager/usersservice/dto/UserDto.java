@@ -13,7 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserDto {
-    private String id;
-    private String telegramId;
+    private int id;
     private List<String> allowedSocialNetworks;
 }
