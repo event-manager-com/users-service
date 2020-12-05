@@ -1,4 +1,4 @@
-package gregad.eventmanager.usersservice.service;
+package gregad.eventmanager.usersservice.services;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gregad.eventmanager.usersservice.UsersServiceApplication;
@@ -6,6 +6,9 @@ import gregad.eventmanager.usersservice.dao.UserDao;
 import gregad.eventmanager.usersservice.dto.SocialNetworkCredentialDto;
 import gregad.eventmanager.usersservice.dto.UserDto;
 import gregad.eventmanager.usersservice.model.UserEntity;
+import gregad.eventmanager.usersservice.services.token_service.TokenHolderServiceImpl;
+import gregad.eventmanager.usersservice.services.user_service.UserService;
+import gregad.eventmanager.usersservice.services.user_service.UserServiceImpl;
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -36,11 +39,13 @@ class UserServiceImplTest {
     private UserService userService;
     private UserDao userDaoMock;
     private RestTemplate restTemplateMock;
+    private ObjectMapper objectMapper=new ObjectMapper();
     @BeforeEach
     public void init(){
          userDaoMock = Mockito.mock(UserDao.class);
          restTemplateMock = Mockito.mock(RestTemplate.class);
-         userService=new UserServiceImpl(userDaoMock,restTemplateMock,new ObjectMapper());
+         userService=new UserServiceImpl(userDaoMock,restTemplateMock,objectMapper,
+                 new TokenHolderServiceImpl(objectMapper,restTemplateMock));
     }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////    
     @Test

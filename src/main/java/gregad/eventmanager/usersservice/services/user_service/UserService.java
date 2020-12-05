@@ -1,4 +1,4 @@
-package gregad.eventmanager.usersservice.service;
+package gregad.eventmanager.usersservice.services.user_service;
 
 import gregad.eventmanager.usersservice.dto.SocialNetworkCredentialDto;
 import gregad.eventmanager.usersservice.dto.UserDto;

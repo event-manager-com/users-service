@@ -1,11 +1,11 @@
 package gregad.eventmanager.usersservice.configuration;
 
-import gregad.eventmanager.usersservice.service.UserServiceImpl;
+import gregad.eventmanager.usersservice.services.token_service.TokenHolderServiceImpl;
+import gregad.eventmanager.usersservice.services.user_service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.event.ContextRefreshedEvent;
-import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
 /**
@@ -20,8 +20,8 @@ public class InitTokenPostConstructEventListener implements ApplicationListener<
     public void onApplicationEvent(ContextRefreshedEvent contextRefreshedEvent) {
         if (!isExecuted) {
             isExecuted=true;
-            UserServiceImpl bean = context.getBean(UserServiceImpl.class);
-            bean.initToken();
+            TokenHolderServiceImpl bean = context.getBean(TokenHolderServiceImpl.class);
+            bean.refreshToken();
         }
     }
 }

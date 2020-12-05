@@ -2,7 +2,7 @@ package gregad.eventmanager.usersservice.rest;
 
 import gregad.eventmanager.usersservice.dto.SocialNetworkCredentialDto;
 import gregad.eventmanager.usersservice.dto.UserDto;
-import gregad.eventmanager.usersservice.service.UserService;
+import gregad.eventmanager.usersservice.services.user_service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 

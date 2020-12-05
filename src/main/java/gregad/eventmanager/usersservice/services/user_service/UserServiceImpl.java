@@ -1,23 +1,21 @@
-package gregad.eventmanager.usersservice.service;
+package gregad.eventmanager.usersservice.services.user_service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import gregad.eventmanager.usersservice.api.ApiConstants;
 import gregad.eventmanager.usersservice.dao.UserDao;
 import gregad.eventmanager.usersservice.dto.*;
 import gregad.eventmanager.usersservice.model.UserEntity;
+import gregad.eventmanager.usersservice.services.token_service.TokenHolderService;
+import static gregad.eventmanager.usersservice.api.ApiConstants.*;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.http.*;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.server.ResponseStatusException;
 
-import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -29,6 +27,7 @@ public class UserServiceImpl implements UserService {
     
     private UserDao repo;
     
+    private TokenHolderService tokenHolderService;
     
     private RestTemplate restTemplate;
     
@@ -39,35 +38,15 @@ public class UserServiceImpl implements UserService {
     @Value("${security.service.url}")
     private String securityServiceUrl;
     
-    private String token;
-    @Value("${security.user.name}")
-    private String secUserName;
-    @Value("${security.user.password}")
-    private String secPassword;
-    private NamePassword namePassword;
-
     @Autowired
-    public UserServiceImpl(UserDao repo, RestTemplate restTemplate, ObjectMapper objectMapper) {
+    public UserServiceImpl(UserDao repo, RestTemplate restTemplate,
+                           ObjectMapper objectMapper, TokenHolderService tokenHolderService) {
         this.repo = repo;
         this.restTemplate = restTemplate;
         this.objectMapper = objectMapper;
+        this.tokenHolderService=tokenHolderService;
     }
     
-    public void initToken(){
-        namePassword=new NamePassword(secUserName,secPassword);
-        updateToken();
-    }
-    
-    @SneakyThrows
-    @Scheduled(cron = "0 5 0 * * *")
-    private void updateToken(){
-        String jsonNamePassword = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(namePassword);
-        HttpHeaders httpHeaders = new HttpHeaders();
-        httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-        HttpEntity<String> request = new HttpEntity<>(jsonNamePassword, httpHeaders);
-        token = restTemplate.postForObject(securityServiceUrl + "/generate", request, Token.class).getToken();
-    }
-
 
     @Override
     public UserDto addUser(int telegramId) {
@@ -131,6 +110,7 @@ public class UserServiceImpl implements UserService {
     private void sendCredentials(SocialNetworkCredentialDto networkCredential) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set(HEADER,tokenHolderService.getToken());
         String networkCredentialJson = objectMapper.writerWithDefaultPrettyPrinter().writeValueAsString(networkCredential);
         HttpEntity<String> request = new HttpEntity<String>(networkCredentialJson, headers);
         restTemplate.postForObject(routerUrl+ ApiConstants.CREDENTIALS, request, Boolean.class);
@@ -151,7 +131,10 @@ public class UserServiceImpl implements UserService {
     }
 
     private void sendToDelete(int id, String networkName) {
-        restTemplate.delete(routerUrl+ApiConstants.CREDENTIALS+"?userId="+id+"&network="+networkName);
+        HttpHeaders headers = new HttpHeaders();
+        headers.set(HEADER,tokenHolderService.getToken());
+        restTemplate.exchange(routerUrl+ApiConstants.CREDENTIALS+"?userId="+id+"&network="+networkName,
+                HttpMethod.DELETE,new HttpEntity<>(headers),Boolean.class);
     }
 
     ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
