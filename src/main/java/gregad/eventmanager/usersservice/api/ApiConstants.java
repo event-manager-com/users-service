@@ -8,5 +8,7 @@ public interface ApiConstants {
     String NETWORKS="/networks";
     String CREDENTIALS="/credentials";
     String HEADER ="Authorization";
+    String VALIDATE="/validate";
+    String GENERATE="/generate";
 
 }
