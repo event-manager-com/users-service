@@ -17,5 +17,5 @@ import java.util.List;
 public class UserEntity {
     @Id
     private int id;
-    private List<String>allowedSocialNetworks;
+    private String name;
 }

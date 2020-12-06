@@ -14,5 +14,5 @@ import java.util.List;
 @AllArgsConstructor
 public class UserDto {
     private int id;
-    private List<String> allowedSocialNetworks;
+    private String name;
 }
