@@ -1,5 +1,6 @@
 package gregad.eventmanager.usersservice.services.user_service;
 
+import gregad.event_manager.loggerstarter.aspect.DoLogging;
 import gregad.eventmanager.usersservice.dao.UserDao;
 import gregad.eventmanager.usersservice.dto.UserDto;
 import gregad.eventmanager.usersservice.model.UserEntity;
@@ -14,6 +15,7 @@ import org.springframework.web.server.ResponseStatusException;
  */
 @Service
 @RefreshScope
+@DoLogging
 public class UserServiceImpl implements UserService {
 
     private UserDao repo;

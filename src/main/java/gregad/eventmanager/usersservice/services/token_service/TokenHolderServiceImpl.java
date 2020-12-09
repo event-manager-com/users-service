@@ -1,19 +1,18 @@
 package gregad.eventmanager.usersservice.services.token_service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import gregad.event_manager.loggerstarter.aspect.DoLogging;
 import gregad.eventmanager.usersservice.api.ApiConstants;
 import gregad.eventmanager.usersservice.dto.NamePassword;
 import gregad.eventmanager.usersservice.dto.Token;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.cloud.context.config.annotation.RefreshScope;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
 import javax.annotation.PostConstruct;
@@ -22,7 +21,7 @@ import javax.annotation.PostConstruct;
  * @author Greg Adler
  */
 @Component
-@RefreshScope
+@DoLogging
 public class TokenHolderServiceImpl implements TokenHolderService {
     private ObjectMapper objectMapper;
     private RestTemplate restTemplate;
@@ -46,7 +45,7 @@ public class TokenHolderServiceImpl implements TokenHolderService {
     void initNamePassword(){
         namePassword=new NamePassword(secUserName,secPassword);
     }
-
+    
     @Override
     @SneakyThrows
     @Scheduled(cron = "0 5 0 * * *")
